@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en">
 
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
+
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <link rel="icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico">
+
+    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111">
+
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+    
+    <link rel="canonical" href="https://codepen.io/GreenSock/pen/eYdyVVe">
+    
+    <link href="https://fonts.googleapis.com/css?family=Signika+Negative:300,400,600" rel="stylesheet" type="text/css">
+    
+    <link rel="stylesheet" href="https://codepen.io/GreenSock/pen/xxmzBrw.css">
+    
+    <style>
+      
+      body, div#content, div#main, .post, .post-body {
+        width: 100.1% !important;
+        height: 100.1vh !important;
+        margin-top: -28px !important;
+        margin-left: 0px !important;
+      }
+      
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        padding: 0;
+        margin: 0;
+        font-family: "Mori";
+        font-weight: 300;
+        height: 100vh;
+        overflow: hidden;
+        background: #0000 !important;
+      }
+
+      .container {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .container.grid, .container.columns {
+        align-content: stretch;
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .letter {
+        text-align: center;
+        color: black;
+        font-size: 10vmax;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 6px;
+      }
+
+      .container.grid .letter {
+        flex-basis: 50%;
+      }
+
+      .container.columns .letter {
+        flex-basis: 25%;
+      }
+
+      .for, .gsap {
+        font-size: 5vmax;
+        color: #cccccc;
+      }
+
+      .for {
+        padding: 2px 1.6vmax;
+        font-weight: 300;
+        display: none;
+      }
+
+      .gsap {
+        padding: 2px 0;
+        font-weight: 600;
+        display: none;
+      }
+
+      .container.final .for, .container.final .gsap {
+        display: block;
+      }
+
+      .G {
+        background: #aa63b7;
+
+      }
+
+      .A {
+        background: #4caf50;
+      }
+
+      .D {
+        background: #ffeb3b;
+      }
+
+      .O {
+        background: #5fada6;
+      }
+
+      .container.plain .letter {
+        background: transparent;
+        color: #cccccc;
+        padding: 0;
+      }
+
+      .logo {
+        position: fixed;
+        width: 100px;
+        bottom: 20px;
+        right: 30px;
+      }
+    </style>
+    
+    <script>
+      window.console = window.console || function(t) {};
+    </script>
+    
+  </head>
+  
+  <body translate="no">
+    
+    <div class="container final">
+      <div class="letter G" data-flip-id="auto-1" style="">G</div>
+      <div class="letter A" data-flip-id="auto-2" style="">A</div>
+      <div class="letter D" data-flip-id="auto-3" style="">D</div>
+      <div class="letter O" data-flip-id="auto-4" style="">O</div>
+      <div class="for" data-flip-id="auto-5" style="">: </div>
+      <div class="gsap" data-flip-id="auto-6" style="">Gestor Avanzado De Organización</div>
+    </div>
+    
+    <script src="https://assets.codepen.io/16327/gsap-latest-beta.min.js"></script>
+    <script src="https://assets.codepen.io/16327/Flip.min.js"></script>
+    
+    <script id="rendered-js">
+      gsap.registerPlugin(Flip);
+      
+      let layouts = ["final", "plain", "columns", "grid"],
+      container = document.querySelector(".container"),
+      curLayout = 0; // index of the current layout
+      
+      function nextState() {
+        const state = Flip.getState(".letter, .for, .gsap", { props: "color,backgroundColor", simple: true }); // capture current state
+        
+        container.classList.remove(layouts[curLayout]); // remove old class
+        curLayout = (curLayout + 1) % layouts.length; // increment (loop back to the start if at the end)
+        container.classList.add(layouts[curLayout]); // add the new class
+        
+        Flip.from(state, { // animate from the previous state
+          absolute: true,
+          stagger: 0.07,
+          duration: 0.7,
+          ease: "power2.inOut",
+          spin: curLayout === 0, // only spin when going to the "final" layout
+          simple: true,
+          onEnter: (elements, animation) => gsap.fromTo(elements, { opacity: 0 }, { opacity: 1, delay: animation.duration() - 0.1 }),
+          onLeave: elements => gsap.to(elements, { opacity: 0 }) });
+          gsap.delayedCall(curLayout === 0 ? 3.5 : 1.5, nextState);
+        }
+        
+        gsap.delayedCall(1, nextState);
+        //# sourceURL=pen.js
+    </script>
+    
+  </body>
+</html>
